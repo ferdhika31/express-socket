@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Chat application with multiple rooms and custom usernames, made with Socket.io and Material Design Lite">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+        <title>Express Socket Chat</title>
+
+        <!-- Add to homescreen for Chrome on Android -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="icon" sizes="192x192" href="android-desktop.png">
+
+        <!-- Add to homescreen for Safari on iOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+        <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+        <!-- Tile icon for Win8 (144x144 + tile color) -->
+        <meta name="msapplication-TileImage" content="images/ms-touch-icon.png">
+        <meta name="msapplication-TileColor" content="#303f9f">
+
+        <link rel="shortcut icon" href="images/favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-pink.min.css" />
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/adm.css">
+    </head>
+    
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="js/script.js"></script>
+    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+
+    <body>
+        <div id="masuk">
+            <div class="mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-200">
+                <main class="mdl-layout__content">
+                    <div class="dialog-card mdl-card mdl-shadow--2dp">
+                        <div class="mdl-card__title mdl-color--teal-700">
+                            <h2 class="mdl-card__title-text" id="email-field-title" style="color: #fff">
+                                Identitas
+                            </h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <form action="" id="login-chat-form">
+                                <div class="nama-field mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="nama-chat-form-input">
+                                    <label class="mdl-textfield__label"  for="nama-chat-form-input">Nama</label>
+                                </div>
+                                <div class="email-field mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="email-chat-form-input">
+                                    <label class="mdl-textfield__label"  for="email-chat-form-input">Email</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="btn-masuk mdl-card__actions">
+                            <button id="masuk-chat-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                                Masuk
+                            </button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <div id="email-error" class="mdl-js-snackbar mdl-snackbar">
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
+            </div>
+        </div>
+        
+        <div id="chat">
+            <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+                <header class="demo-header mdl-layout__header">
+                    <div class="mdl-layout__header-row">
+                        <span class="mdl-layout-title">Home</span>
+                        <div class="mdl-layout-spacer"></div>
+                        
+                        <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+                            <i class="material-icons">more_vert</i>
+                        </button>
+                        <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+                            <li class="mdl-menu__item">About</li>
+                            <li class="mdl-menu__item">Contact</li>
+                            <li class="mdl-menu__item">Legal information</li>
+                        </ul>
+                    </div>
+                </header>
+                <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+                    <header class="demo-drawer-header">
+                        <img src="images/user.jpg" class="demo-avatar" id="identitas-foto">
+                        <div class="demo-avatar-dropdown">
+                            <span id="identitas-email"></span>
+                            <!-- <div class="mdl-layout-spacer"></div>
+                            <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                            <i class="material-icons" role="presentation">arrow_drop_down</i>
+                            <span class="visuallyhidden">Accounts</span>
+                            </button>
+                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+                            <li class="mdl-menu__item">hello@example.com</li>
+                            <li class="mdl-menu__item">info@example.com</li>
+                            <li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
+                            </ul> -->
+                        </div>
+                    </header>
+                    <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+                        <a class="mdl-navigation__link">
+                            <i class="material-icons" role="presentation">forum</i>
+                            Semua
+                        </a>
+                        
+                        <!-- <button class="add-channel mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect"
+                        id="tambah-ruangan">
+                            <i class="material-icons">add</i>
+                        </button> -->
+
+                        <div class="mdl-layout-spacer"></div>
+                        <a class="mdl-navigation__link mdl-color--blue-grey-900" id="tambah-ruangan">
+                            <!-- <i class="material-icons" role="presentation">help_outline</i><span class="visuallyhidden"></span>Help</span> -->
+                            <center>Gabung/Buat Ruangan</center>
+                        </a>
+                    </nav>
+                </div>
+                <main class="mdl-layout__content mdl-color--grey-100">
+                    <div class="page-content">
+                        <section class="chat-area mdl-grid">
+                            <div class="mdl-cell mdl-cell--9-col" id="chat-cell">
+                            </div>
+                            
+                            <div class="user-card mdl-color--teal-100 mdl-card mdl-cell mdl-cell--3-col mdl-cell--hide-phone mdl-cell--hide-tablet">
+                                <div class="mdl-card__title">
+                                    <h2 class="mdl-card__title-text">Pengguna</h2>
+                                </div>
+                                <div class="user-list-div">
+                                    <ul class="listborder mdl-list" id="users">
+                                        <li class="user-list-item mdl-list__item">
+                                            <span class="mdl-list__item-primary-content">
+                                                <img src="//www.gravatar.com/avatar/8c2ef75f6fd262a0d4002961a9436e0f?s=140&r=x&d=mm" class="demo-avatar">&nbsp;
+                                                Dika
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                        </section>
+                        
+                        <section class="message-area mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="message-card mdl-card mdl-grid mdl-shadow--2dp mdl-color--teal-100">
+                                    <div class="message-box mdl-cell mdl-cell--11-col">
+                                        <form action="" id="send-message-form">
+                                            <div class="message-field mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                <input class="mdl-textfield__input" autocomplete="off" type="text" id="send-message-form-input">
+                                                <label class="mdl-textfield__label" for="send-message-form-input">Pesan</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="send-button mdl-cell mdl-cell--1-col">
+                                        <button id="send-message-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                                            Kirim
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </main>
+            </div>
+        </div>
+        
+        <div id="ruangan">
+            <div class="mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-200">
+                <main class="mdl-layout__content" style="background-color:rgba(0,0,0,0.5)">
+                    <div class="dialog-card mdl-card mdl-shadow--16dp">
+                        <div class="mdl-card__title mdl-color--teal-700">
+                            <h2 class="mdl-card__title-text" style="color: #fff">Gabung ke ruangan</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            <form action="" id="add-channel-form">
+                                <div class="namaruangan-field mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="text" id="add-channel-form-input">
+                                    <label class="mdl-textfield__label" for="add-channel-form-input">Nama Ruangan</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="mdl-card__actions">
+                            <button id="add-channel-form-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Join</button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <div id="channel-error" class="mdl-js-snackbar mdl-snackbar">
+                <div class="mdl-snackbar__text"></div>
+                <button class="mdl-snackbar__action" type="button"></button>
+            </div>
+        </div>
+    </body>
+</html>
