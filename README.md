@@ -16,6 +16,7 @@ npm start # or node app.js
 ## Reference
 * [Material Design Lite](http://getmdl.io)
 * [Simple Chat Application using NodeJS and SocketIO](https://www.codeproject.com/Articles/777640/Simple-chat-application-using-NodeJS-and-Socket-IO)
-* [MDLSocket](https://github.com/leevilehtonen/mdl-socket-chat.git)
+* [MDLSocketChat](https://github.com/leevilehtonen/mdl-socket-chat.git)
+* [MomentJS](https://momentjs.com/)
 
 Chat should be now running at [localhost:1000](http://localhost:1000/).

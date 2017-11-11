@@ -1,6 +1,8 @@
 /* 
     Bubble template dari https://codepen.io/Varo/pen/gbZzgr
 */
+@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
 
 html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
@@ -115,9 +117,6 @@ html, body {
 }
 
 /* Chat */
-@import url(https://fonts.googleapis.com/css?family=Lato:100,300,400,700);
-@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css);
-
 .last{
     position: absolute;
     top: 30px;
@@ -293,6 +292,7 @@ html, body {
     -moz-user-select: none;
     -ms-user-select: none;
 }
+
 .msg time:before{
     content:"\f017";
     color: #ddd;

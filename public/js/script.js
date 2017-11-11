@@ -91,7 +91,6 @@ $(document).ready(function () {
             }
 
         });
-        // $loginChatFormInput.val('');
     }
 
     function buatRuangan(namaRuangan) {
@@ -159,6 +158,17 @@ $(document).ready(function () {
         namaRuangan.text('Ruangan : '+nama);
     }
 
+    // Update waktu kirim
+    setInterval(function(){
+        var waktu = $(".waktuKirim");
+
+        waktu.each(function(){
+            var each = moment($(this).data('time'));
+            $(this).text(each.fromNow());
+        });
+
+    },60000);
+
     /* Server sends */
     socket.on('users', function (data) {
         $('#users').html('');
@@ -196,19 +206,19 @@ $(document).ready(function () {
     socket.on('chat', function (msg) {
         
         //Calculate time
-        var d = new Date();
-        var s = d.getSeconds();
-        var m = d.getMinutes();
-        var h = d.getHours();
-        if (s < 10) {
-            s = '0' + s;
-        }
-        if (m < 10) {
-            m = '0' + m;
-        }
-        if (h < 10) {
-            h = '0' + h;
-        }
+        // var d = new Date();
+        // var s = d.getSeconds();
+        // var m = d.getMinutes();
+        // var h = d.getHours();
+        // if (s < 10) {
+        //     s = '0' + s;
+        // }
+        // if (m < 10) {
+        //     m = '0' + m;
+        // }
+        // if (h < 10) {
+        //     h = '0' + h;
+        // }
 
         // Buat pesan baru
         var listItem = '';
@@ -217,16 +227,21 @@ $(document).ready(function () {
         }else{
             listItem = '<li class="other">';
         }
+
+        var waktuKirim = moment();
         
         listItem += '<div class="avatar"><img src="'+msg.foto+'" draggable="false"/></div>';
         listItem += '<div class="msg">';
         listItem += '<strong>'+msg.nama+'</strong><hr>';
         listItem += '<p>'+msg.pesan+'</p>';
-        listItem += '<time>'+h+':'+m+'</time>';
+        listItem += '<time class="waktuKirim" data-time=' + waktuKirim + '></time>';
         listItem += '</div>';
         listItem += '</li>';
 
         $('#chat-list-' + msg.room).append(listItem);
+
+        var waktu = $(".waktuKirim");
+		waktu.last().text(waktuKirim.fromNow());
 
         // Scroll down
         $('#chat-list-' + msg.room).animate({ scrollTop: $('#chat-list-' + msg.room).prop("scrollHeight") }, 500);
