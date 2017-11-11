@@ -86,22 +86,24 @@ $(document).ready(function () {
         inputPesan.val('');
     }
 
-    /* Server sends a new message */
+    /* Server sends */
     socket.on('users', function (data) {
         $('#users').html('');
 
+        console.log(data);
         //Loop through the users
         for (i = 0; i < data.length; i++) {
             var listItem = $('<li class="user-list-item mdl-list__item">');
             var mainSpan = $('<span class="mdl-list__item-primary-content"></span>');
-            mainSpan.append('<i class="material-icons mdl-list__item-icon">person</i>' + data[i]);
+            mainSpan.append('<img src="'+data[i].foto+'" class="demo-avatar">&nbsp;' + data[i].nama);
             listItem.append(mainSpan);
             $('#users').append(listItem);
         }
     });
-    
+
     socket.on('user', function () {
-        $('#chat-cell').children('div').each(function () {
+        // get ruangan
+        $('#chat-cell').children('ol').each(function () {
             if ($(this).is(":visible")) {
                 socket.emit('daftaruser', $(this).prop('id').substring(10));
             }

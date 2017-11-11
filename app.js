@@ -42,8 +42,12 @@ io.on('connection', function(socket){
             users[socket.email] = socket;
             socket.join('semua');
             if (rooms['semua'] == undefined) rooms['semua'] = [];
-            rooms['semua'].push(socket.email);
-            io.emit('user');
+            rooms['semua'].push({
+                foto : socket.image,
+                nama : socket.nama,
+                email : socket.email
+            });
+            socket.emit('user');
         }
     });
 
@@ -66,7 +70,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('daftaruser', function (data) {
-        socket.emit('users', rooms[data]);
+        socket.broadcast.emit('users', rooms[data.toLowerCase()]);
     });
 
     socket.on('disconnect', function (data) {
