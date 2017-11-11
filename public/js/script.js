@@ -1,12 +1,11 @@
 $(document).ready(function () {
     var socket = io(); //Socket instance
 
-    // var tampilan 
+    // variabel komponen
     var chatWindow = $('#chat'); // tampilan chat element div
     var loginWindow = $('#masuk'); // tampilan masuk element div
-    var addChannelWindow = $('#ruangan'); //Add channel window (dialog) div
-
-    // var komponen
+    var addChannelWindow = $('#ruangan'); //Add channel window (dialog) div  
+    var namaRuangan = $('#nama-ruangan');  
     var inputNama = $('#nama-chat-form-input');
     var inputEmail = $('#email-chat-form-input');
     var btnMasuk = $('#masuk-chat-button');
@@ -14,43 +13,62 @@ $(document).ready(function () {
     var lblIdentitasEmail = $('#identitas-email');
     var imgIdentitasFoto = $('#identitas-foto');
     var inputPesan = $('#send-message-form-input');
-    var sendMessageForm = $('#send-message-form'); //Form for sending messages
-    var sendMessageFormInput = $('#send-message-form-input'); //Textfield for message input
-    var sendMessageButton = $('#send-message-button'); //Button for sending message
-    var inputNamaRuangan = $();
+    var kirimPesanForm = $('#send-message-form'); //Form untuk kirim pesan
+    var kirimPesanFormInput = $('#send-message-form-input'); // untuk kirim pesan dari input
+    var kirimPesanButton = $('#send-message-button'); //Button untuk kirim pesan
+    var inputNamaRuangan = $('#nama-ruangan-form-input');
+    var btnBuatRuang = $('#buat-ruangan-form-button');
+    var tutupModalRuangan = $('#tutup-modal-ruangan');
 
-    // chatWindow.show();
+    var daftarRuangan = $('#daftar-ruangan');
 
-    btnMasuk.click(function () {
+    var ruanganSekarang = 'Semua';
+
+    // trigerna
+    btnMasuk.click(function(){
         masuk();
-        console.log('hitut');
         return false;
     });
 
-    btnTambahRuang.click(function () {
+    btnTambahRuang.click(function(){
         addChannelWindow.show();
         return false;
     });
 
-    //Send message form triggers
-    sendMessageButton.click(function () {
-        sendMessage();
+    btnBuatRuang.click(function(){
+        tambahRuangan();
         return false;
     });
 
-    sendMessageForm.submit(function () {
-        sendMessage();
+    tutupModalRuangan.click(function(){
+        addChannelWindow.hide();
+        return false;
+    });
+    
+    kirimPesanButton.click(function(){
+        kirimPesan();
         return false;
     });
 
+    kirimPesanForm.submit(function(){
+        kirimPesan();
+        return false;
+    });
+
+    daftarRuangan.click(function(e){
+        if (e.target.tagName === 'A' && e.target.id.substring(0, 7) === 'ruangan') {
+            var namaRuangan = e.target.id.substring(8);
+            loadRuangan(namaRuangan);
+        }
+    });
 
     function masuk(){
+        // inisiasi awal
         buatRuangan('Semua');
         $('#chat-list-Semua').show();
+        namaRuangan.text('Ruangan : Semua');
 
-        
         socket.emit('masuk', {email:inputEmail.val(), nama:inputNama.val()}, function (data) {
-
             if(data) {
                 loginWindow.hide();
                 chatWindow.show();
@@ -70,21 +88,68 @@ $(document).ready(function () {
     }
 
     function buatRuangan(namaRuangan) {
-        var ruanganBaru = $('<ol class="chat-list mdl-color--teal-100" id="chat-list-' + namaRuangan + '"><li class="bot"><div class="msg"><p>Invite teman anda dengan join ke ruangan ini!</p></div></li></ol>');
+        var ruanganBaru = $('<ol class="chat-list mdl-color--teal-100" id="chat-list-' + namaRuangan + '"><li class="bot"><div class="msg"><p>Invite teman anda dengan memberti tahu nama ruangan ini!</p></div></li></ol>');
         $('#chat-cell').append(ruanganBaru);
     }
 
-    //Send message
-    function sendMessage() {  
-        var currentroom = "";
+    // Kirim pesan
+    function kirimPesan() {  
+        var ruanganSekarang = "";
         $('#chat-cell').children('ol').each(function () {
             if ($(this).is(":visible")) {
-                currentroom = $(this).prop('id').substring(10);
+                ruanganSekarang = $(this).prop('id').substring(10);
             }
         });
 
-        socket.emit('chat', { msg: inputPesan.val(), room: currentroom });
+        socket.emit('chat', { msg: inputPesan.val(), room: ruanganSekarang });
         inputPesan.val('');
+    }
+
+    // Buat atau gabung ke ruangan baru
+    function tambahRuangan() {
+        var namaRuanganBaru = inputNamaRuangan.val().trim().toLowerCase();
+        var sudahGabung = false;
+        $('#chat-cell').children('ol').each(function () {
+            if ($(this).prop('id').substring(10) == namaRuanganBaru) {
+                sudahGabung = true;
+            }
+        });
+        if (!sudahGabung) {
+            var linkRuangan = $('<a class="mdl-navigation__link" id="ruangan-'+namaRuanganBaru+'"></a>');
+            linkRuangan.html('<i class="material-icons" role="presentation">forum</i>&nbsp;'+namaRuanganBaru);
+            daftarRuangan.prepend(linkRuangan);
+
+            inputNamaRuangan.val('');
+            loginWindow.hide();
+            chatWindow.show();
+            addChannelWindow.hide();
+            buatRuangan(namaRuanganBaru);
+            socket.emit('gabung', namaRuanganBaru);
+            loadRuangan(namaRuanganBaru);
+
+            socket.emit('pesan_sistem', { pesan: '<font color"green"><strong>'+inputNama.val()+'</strong> bergabung dalam obrolan.</font>', room: namaRuanganBaru });
+            
+        } else {
+            inputNamaRuangan.val('');
+            loginWindow.hide();
+            chatWindow.show();
+            addChannelWindow.hide();
+            loadRuangan(newChannelName);
+        }
+    }
+
+    // load ruangan
+    function loadRuangan(nama){
+        $('#chat-cell').children('ol').each(function () {
+            if ($(this).prop('id').substring(10) == nama) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+        socket.emit('daftaruser', nama);
+        ruanganSekarang = nama;
+        namaRuangan.text('Ruangan : '+nama);
     }
 
     /* Server sends */
@@ -95,7 +160,7 @@ $(document).ready(function () {
         //Loop through the users
         for (i = 0; i < data.length; i++) {
             var listItem = $('<li class="user-list-item mdl-list__item">');
-            var mainSpan = $('<span class="mdl-list__item-primary-content"></span>');
+            var mainSpan = $('<span class="mdl-list__item-primary-content dkOrang"></span>');
             mainSpan.append('<img src="'+data[i].foto+'" class="demo-avatar">&nbsp;' + data[i].nama);
             listItem.append(mainSpan);
             $('#users').append(listItem);
@@ -138,7 +203,7 @@ $(document).ready(function () {
             h = '0' + h;
         }
 
-        //Create new message
+        // Buat pesan baru
         var listItem = '';
         if(inputEmail.val()==msg.email){
             listItem = '<li class="self">';

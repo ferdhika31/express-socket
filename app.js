@@ -58,6 +58,17 @@ io.on('connection', function(socket){
         socket.broadcast.emit("pesan_sistem", objMsg);
     });
 
+    socket.on('gabung', function (room) {
+        socket.join(room);
+        if (rooms[room] == undefined) rooms[room] = [];
+        rooms[room].push({
+            foto : socket.image,
+            nama : socket.nama,
+            email : socket.email
+        });
+        io.emit('user');
+    });
+
     socket.on('chat', function (msg) {
         // parameter
         var objMsg = { pesan: msg.msg, nama: socket.nama, email: socket.email, foto: socket.image, room: msg.room };
@@ -72,9 +83,6 @@ io.on('connection', function(socket){
     socket.on('daftaruser', function (data) {
         //kirim data ke client yang minta/kirim sebelumnya.
         socket.emit('users', rooms[data.toLowerCase()]);
-        
-        //kirim data ke semua client yang mengakses site(localhost) yang sama 
-        socket.broadcast.emit('users', rooms[data.toLowerCase()]);
     });
 
     socket.on('disconnect', function (data) {
@@ -82,12 +90,6 @@ io.on('connection', function(socket){
         delete users[socket.email];
         for (var room in rooms) {
             if (rooms.hasOwnProperty(room)) {
-                // kirim pesan dari sistem ke semua pengguna yang ada di ruangan
-                socket.broadcast.emit('pesan_sistem', { 
-                    pesan: '<font color"green"><strong>'+socket.nama+'</strong> keluar dari ruangan.</font>', 
-                    room: 'Semua' 
-                });
-
                 var element = rooms[room];
                 var index = element.map(function(el) {
                     return el.email;
@@ -97,6 +99,11 @@ io.on('connection', function(socket){
                     // socket.emit('daftaruser', room);
                     element.splice(index, 1);
                     io.to(room).emit('user');
+                    // kirim pesan dari sistem ke semua pengguna yang ada di ruangan
+                    socket.broadcast.to(room).emit('pesan_sistem', { 
+                        pesan: '<font color"green"><strong>'+socket.nama+'</strong> keluar dari ruangan.</font>', 
+                        room: room 
+                    });
                 }
             }
         }  
