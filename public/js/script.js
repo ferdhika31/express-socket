@@ -48,13 +48,14 @@ $(document).ready(function () {
         buatRuangan('Semua');
         $('#chat-list-Semua').show();
 
-        socket.emit('pesan_sistem', { pesan: '<font color"green"><strong>'+inputNama.val()+'</strong> bergabung dalam obrolan.</font>', room: 'Semua' });
-
+        
         socket.emit('masuk', {email:inputEmail.val(), nama:inputNama.val()}, function (data) {
 
             if(data) {
                 loginWindow.hide();
                 chatWindow.show();
+
+                socket.emit('pesan_sistem', { pesan: '<font color"green"><strong>'+inputNama.val()+'</strong> bergabung dalam obrolan.</font>', room: 'Semua' });
                 
                 lblIdentitasEmail.text(inputEmail.val()+'('+inputNama.val()+')');
                 imgIdentitasFoto.attr("src", data);
@@ -108,6 +109,7 @@ $(document).ready(function () {
                 socket.emit('daftaruser', $(this).prop('id').substring(10));
             }
         });
+        
     });
 
     socket.on('pesan_sistem', function(data){

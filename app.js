@@ -54,22 +54,26 @@ io.on('connection', function(socket){
     socket.on('pesan_sistem', function(data){
         var objMsg = { pesan: data.pesan, room:data.room };
         
-        //send the data to all the clients who are accessing the same site(localhost)
+        //kirim data ke semua client yang mengakses site(localhost) yang sama 
         socket.broadcast.emit("pesan_sistem", objMsg);
     });
 
     socket.on('chat', function (msg) {
-        
+        // parameter
         var objMsg = { pesan: msg.msg, nama: socket.nama, email: socket.email, foto: socket.image, room: msg.room };
 
-        //send the data to the current client requested/sent.
+        //kirim data ke client yang minta/kirim sebelumnya.
         socket.emit('chat', objMsg);
 
-        //send the data to all the clients who are accessing the same site(localhost)
+        //kirim data ke semua client yang mengakses site(localhost) yang sama 
         socket.broadcast.emit("chat", objMsg);
     });
 
     socket.on('daftaruser', function (data) {
+        //kirim data ke client yang minta/kirim sebelumnya.
+        socket.emit('users', rooms[data.toLowerCase()]);
+        
+        //kirim data ke semua client yang mengakses site(localhost) yang sama 
         socket.broadcast.emit('users', rooms[data.toLowerCase()]);
     });
 
@@ -85,8 +89,12 @@ io.on('connection', function(socket){
                 });
 
                 var element = rooms[room];
-                var index = element.indexOf(socket.email);
+                var index = element.map(function(el) {
+                    return el.email;
+                }).indexOf(socket.email);
+
                 if (index > -1) {
+                    // socket.emit('daftaruser', room);
                     element.splice(index, 1);
                     io.to(room).emit('user');
                 }
@@ -95,10 +103,10 @@ io.on('connection', function(socket){
     });
 
     socket.on('clientMsg', function(objMsg){
-        //send the data to the current client requested/sent.
+        //kirim data ke client yang minta/kirim sebelumnya.
         socket.emit("serverMsg", objMsg);
         
-        //send the data to all the clients who are accessing the same site(localhost)
+        //kirim data ke semua client yang mengakses site(localhost) yang sama 
         socket.broadcast.emit("serverMsg", objMsg);
     });
 });
