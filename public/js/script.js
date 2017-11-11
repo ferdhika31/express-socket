@@ -9,12 +9,13 @@ $(document).ready(function () {
     var inputNama = $('#nama-chat-form-input');
     var inputEmail = $('#email-chat-form-input');
     var btnMasuk = $('#masuk-chat-button');
+    var frmMasuk = $('#form-masuk-chat');
+
     var btnTambahRuang = $('#tambah-ruangan');
     var lblIdentitasEmail = $('#identitas-email');
     var imgIdentitasFoto = $('#identitas-foto');
     var inputPesan = $('#send-message-form-input');
     var kirimPesanForm = $('#send-message-form'); //Form untuk kirim pesan
-    var kirimPesanFormInput = $('#send-message-form-input'); // untuk kirim pesan dari input
     var kirimPesanButton = $('#send-message-button'); //Button untuk kirim pesan
     var inputNamaRuangan = $('#nama-ruangan-form-input');
     var btnBuatRuang = $('#buat-ruangan-form-button');
@@ -26,6 +27,12 @@ $(document).ready(function () {
 
     // trigerna
     btnMasuk.click(function(){
+        masuk();
+        return false;
+    });
+
+    frmMasuk.submit(function(){
+        alert('hitut');
         masuk();
         return false;
     });

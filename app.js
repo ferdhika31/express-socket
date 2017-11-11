@@ -10,23 +10,9 @@ var port = 1000;
 var users = {};
 var rooms = {};
 
-app.get('/chat', function(req, res){
-
+app.get('/', function(req, res){
     res.sendFile(__dirname + '/public/chat.html');
 });
-
-app.post('/kk', function(req, res){
-    // res.send('Hello World!');
-    res.send(req.param('id', null));
-    // res.sendFile(__dirname + '/public/index.html');
-});
-
-app.get('/email/:email', function(req, res){
-    var filename = gravatar.url(req.params.email, {s: '140', r: 'x', d: 'mm'});
-    // res.contentType(filename);
-
-    res.send(filename);
-})
 
 io.on('connection', function(socket){
     socket.on('masuk', function (data, callback) {
@@ -107,14 +93,6 @@ io.on('connection', function(socket){
                 }
             }
         }  
-    });
-
-    socket.on('clientMsg', function(objMsg){
-        //kirim data ke client yang minta/kirim sebelumnya.
-        socket.emit("serverMsg", objMsg);
-        
-        //kirim data ke semua client yang mengakses site(localhost) yang sama 
-        socket.broadcast.emit("serverMsg", objMsg);
     });
 });
 
