@@ -19,4 +19,4 @@ npm start # or node app.js
 * [MDLSocketChat](https://github.com/leevilehtonen/mdl-socket-chat.git)
 * [MomentJS](https://momentjs.com/)
 
-Chat should be now running at [localhost:1000](http://localhost:1000/).
+Chat bisa di coba melalui url [localhost:1000](http://localhost:1000/).

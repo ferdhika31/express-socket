@@ -21,7 +21,7 @@ io.on('connection', function(socket){
         } else {
             socket.nama = data.nama;
             socket.email = data.email;
-            socket.image = gravatar.url(data.email, {s: '140', r: 'x', d: 'mm'});
+            socket.image = gravatar.url(data.email, {s: '140', r: 'x', d: 'http://dika.web.id/assets/fav.png'});
 
             callback(socket.image);
 
